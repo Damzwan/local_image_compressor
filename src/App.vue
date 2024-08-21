@@ -10,54 +10,23 @@
     </div>
 
     <div class="flex flex-col justify-center items-center p-8">
-      <input
-        accept="image/*"
-        type="file"
-        ref="fileInput"
-        class="file-input file-input-bordered w-full max-w-xs"
-        @change="onFileChanged"
-        multiple
-      />
-      <div
-        class="mt-4 w-full max-w-lg border-2 border-dashed border-gray-500 p-8 text-center rounded-md cursor-pointer"
-        @dragover.prevent
-        @drop.prevent="handleDrop"
-        @click="handleClick"
-      >
+      <input accept="image/*" type="file" ref="fileInput" class="file-input file-input-bordered w-full max-w-xs"
+        @change="onFileChanged" multiple />
+      <div class="mt-4 w-full max-w-lg border-2 border-dashed border-gray-500 p-8 text-center rounded-md cursor-pointer"
+        @dragover.prevent @drop.prevent="handleDrop" @click="handleClick">
         <p class="text-gray-500">Drag and drop files here, or click to select files</p>
         <div class="mt-4 flex flex-wrap overflow-y-auto max-h-48">
-          <div
-            v-for="(image, index) in images"
-            :key="index"
-            class="m-2 w-20 h-20 flex justify-center items-center border rounded-md overflow-hidden relative"
-          >
-            <button
-              class="btn btn-square absolute right-0 top-0 w-[24px] h-[24px] z-10 min-h-0"
-              @click.stop="removeImg(index)"
-            >
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                class="h-5 w-5"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="red"
-              >
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  stroke-width="2"
-                  d="M6 18L18 6M6 6l12 12"
-                />
+          <div v-for="(image, index) in images" :key="index"
+            class="m-2 w-20 h-20 flex justify-center items-center border rounded-md overflow-hidden relative">
+            <button class="btn btn-square absolute right-0 top-0 w-[24px] h-[24px] z-10 min-h-0"
+              @click.stop="removeImg(index)">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="red">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
               </svg>
             </button>
 
             <div class="w-full h-full">
-              <img
-                :src="image"
-                alt="Preview"
-                class="object-cover w-full h-full"
-                v-if="image != ''"
-              />
+              <img :src="image" alt="Preview" class="object-cover w-full h-full" v-if="image != ''" />
               <div class="w-full h-full object-cover flex justify-center items-center" v-else>
                 <span class="loading loading-spinner loading-xs"></span>
               </div>
@@ -66,37 +35,25 @@
         </div>
       </div>
 
-      <div
-        v-if="compressionTasks.length > 0"
-        class="mt-4 w-full max-w-lg border-2 border-full border-gray-500 px-4 py-2 text-center rounded-md relative overflow-y-auto overflow-x-hidden max-h-96"
-      >
+      <div v-if="compressionTasks.length > 0"
+        class="mt-4 w-full max-w-lg border-2 border-full border-gray-500 px-4 py-2 text-center rounded-md relative overflow-y-auto overflow-x-hidden max-h-96">
         <p class="text-white text-xl">Compressed Images</p>
         <hr class="my-2 border-gray-600" />
 
         <div v-for="(task, index) in compressionTasks" :key="index" class="w-full my-1">
           <div class="flex justify-between items-center">
             <div class="w-14 h-14 border rounded-md overflow-hidden">
-              <img
-                :src="task.preview"
-                alt="Compressed Preview"
-                class="object-cover w-full h-full"
-              />
+              <img :src="task.preview" alt="Compressed Preview" class="object-cover w-full h-full" />
             </div>
             <div class="flex flex-col items-center">
               <div v-if="task.status === 'compressing'">
                 <p>Compressing...</p>
               </div>
               <div v-else-if="task.status === 'done'">
-                <button
-                  @click="downloadImage(task.compressedFile as File)"
-                  class="btn btn-primary mt-2 mr-3"
-                >
+                <button @click="downloadImage(task.compressedFile as File)" class="btn btn-primary mt-2 mr-3">
                   Download
                 </button>
-                <button
-                  @click="copyImage(task.compressedFile as File)"
-                  class="btn btn-secondary mt-2"
-                >
+                <button @click="copyImage(task.compressedFile as File)" class="btn btn-secondary mt-2">
                   Copy
                 </button>
               </div>
@@ -108,33 +65,20 @@
           <hr class="my-2 border-gray-600" />
         </div>
       </div>
-      <button
-        class="btn btn-secondary fixed left-4 bottom-4"
-        @click="downloadAll"
-        :disabled="tasksToBeCompleted > 0 || compressionTasks.length == 0"
-      >
+      <button class="btn btn-secondary fixed left-4 bottom-4" @click="downloadAll"
+        :disabled="tasksToBeCompleted > 0 || compressionTasks.length == 0">
         <p class="text-white text-2xl">Download all</p>
       </button>
     </div>
 
-    <button
-      class="btn fixed right-4 bottom-4 btn-primary"
-      :disabled="images.length == 0"
-      @click="compress"
-    >
+    <button class="btn fixed right-4 bottom-4 btn-primary" :disabled="images.length == 0" @click="compress">
       <p class="text-2xl text-white">Compress</p>
     </button>
 
     <div class="toast animate-in fade-in bottom-12" v-show="showToast">
       <div class="alert alert-success flex flex-col" v-if="!copyFailed">
         <span>Copied to clipboard</span>
-        <img
-          :src="copiedImageUrl"
-          width="128"
-          alt=""
-          v-show="copiedImageUrl"
-          class="cursor-pointer"
-        />
+        <img :src="copiedImageUrl" width="128" alt="" v-show="copiedImageUrl" class="cursor-pointer" />
       </div>
 
       <div class="alert alert-error" v-else>
@@ -327,6 +271,12 @@ function downloadAll() {
     saveAs(content, 'compressed-images.zip')
   })
 }
+
+
+window.addEventListener("keyup", (key) => {
+  if (key.code == "Enter") images.value.length == 0 ? downloadAll() : compress();
+})
+
 </script>
 
 <style scoped></style>
